@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charles-Alexis Ruzette</title>
+<link rel="icon" type="image/svg+xml" href="favicon-large-dot.svg">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --black: #111110;
+    --gray: #999994;
+    --light: #ffffff;
+    --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--white);
+    color: var(--black);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 26px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(6px);
+  }
+
+  .nav-name {
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--black);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--gray);
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active { color: var(--black); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.visible { display: block; }
+
+  /* PROJECTS PAGE */
+  #page-projects { padding: 88px 0 120px; }
+
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .project-item {
+    position: relative;
+    cursor: pointer;
+    background: var(--white);
+    padding: 80px 120px;
+  }
+
+  .project-item img {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    transition: opacity 0.4s;
+  }
+
+  .project-item:hover img { opacity: 0.88; }
+
+  .project-label {
+    position: absolute;
+    bottom: 80px;
+    left: 120px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-item:hover .project-label { opacity: 1; }
+
+  .project-label-title {
+    display: block;
+    font-size: 12px;
+    color: var(--black);
+  }
+
+  .project-label-meta {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-top: 3px;
+  }
+
+  .project-placeholder {
+    width: 100%;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* DETAIL PAGE */
+  #page-detail { padding-top: 88px; padding-bottom: 140px; }
+
+  .detail-back {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 0 80px;
+    display: inline-block;
+    margin-bottom: 80px;
+    margin-top: 24px;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    text-decoration: none;
+  }
+
+  .detail-back:hover { color: var(--black); }
+
+  /* Header block */
+  .detail-header {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 80px;
+    padding: 0 80px;
+    margin-bottom: 100px;
+    max-width: 1000px;
+  }
+
+  .detail-title {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .detail-meta {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gray);
+    line-height: 2.2;
+    margin-top: 20px;
+  }
+
+  .detail-intro {
+    font-size: 13px;
+    line-height: 1.85;
+    color: #555;
+  }
+
+  /* Full-width image block */
+  .detail-block {
+    padding: 0 80px;
+    margin-bottom: 80px;
+  }
+
+  .detail-block img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Two images side by side, natural proportions */
+  .detail-block-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 0 80px;
+    margin-bottom: 80px;
+    align-items: start;
+  }
+
+  .detail-block-pair img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* wide + narrow */
+  .detail-block-aside {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    padding: 0 80px;
+    margin-bottom: 80px;
+    align-items: start;
+  }
+
+  .detail-block-aside img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* text panel between images */
+  .detail-block-text {
+    padding: 80px 80px;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+  }
+
+  .detail-block-text-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding-top: 3px;
+  }
+
+  .detail-block-text-content {
+    font-size: 13px;
+    line-height: 1.85;
+    color: #555;
+  }
+
+  .detail-block-text-content p { margin-bottom: 1.4em; }
+  .detail-block-text-content p:last-child { margin-bottom: 0; }
+
+  /* INFO PAGE */
+  #page-info {
+    padding: 88px 40px 100px;
+    max-width: 680px;
+  }
+
+  .info-name {
+    font-size: 13px;
+    font-weight: 400;
+    margin-bottom: 40px;
+  }
+
+  .info-bio {
+    font-size: 13px;
+    line-height: 1.85;
+    color: #555;
+    margin-bottom: 64px;
+  }
+
+  .info-section-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 12px;
+  }
+
+  .info-list {
+    list-style: none;
+    margin-bottom: 48px;
+  }
+
+  .info-list li {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--black);
+    padding: 9px 0;
+    border-bottom: 0.5px solid #e8e7e3;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .info-list li span {
+    color: var(--gray);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* CONTACT PAGE */
+  #page-contact {
+    padding: 88px 40px 100px;
+    max-width: 480px;
+  }
+
+  .contact-heading {
+    font-size: 13px;
+    font-weight: 400;
+    margin-bottom: 56px;
+  }
+
+  .contact-block { margin-bottom: 40px; }
+
+  .contact-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+
+  .contact-value {
+    font-size: 13px;
+    color: var(--black);
+    text-decoration: none;
+    border-bottom: 0.5px solid transparent;
+    transition: border-color 0.2s;
+    display: inline-block;
+  }
+
+  .contact-value:hover { border-color: var(--black); }
+
+  @media (max-width: 700px) {
+    nav { padding: 18px 20px; }
+    .nav-links { gap: 20px; }
+    #page-projects { padding: 72px 0 80px; }
+    .project-item { padding: 48px 24px; }
+    .project-label { bottom: 48px; left: 24px; }
+    .project-item img { max-width: 100%; }
+    #page-info, #page-contact { padding: 72px 20px 60px; }
+    .detail-back { padding: 0 24px; }
+    .detail-header { padding: 0 24px; grid-template-columns: 1fr; gap: 24px; margin-bottom: 56px; }
+    .detail-block { padding: 0 24px; margin-bottom: 48px; }
+    .detail-block-pair { padding: 0 24px; grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }
+    .detail-block-aside { padding: 0 24px; grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }
+    .detail-block-text { padding: 48px 24px; grid-template-columns: 1fr; gap: 16px; margin-bottom: 48px; }
+  }
+
+/* =========================================================
+   FALA-INSPIRED SYSTEM — SMALL PLATES / WHITE SPACE / NO OVERLAP
+   ========================================================= */
+
+:root {
+  --white: #ffffff;
+  --light: #ffffff;
+  --black: #111110;
+  --gray: #9a9a94;
+}
+
+/* NAV refinement */
+nav {
+  padding: 24px 48px;
+  background: rgba(255,255,255,0.96);
+}
+
+.nav-name {
+  font-size: 12px;
+}
+
+.nav-links {
+  gap: 38px;
+}
+
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+/* HOME */
+#page-projects {
+  padding: 92px 0 120px;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 24px;
+  row-gap: 170px;
+  padding: 80px 48px 110px;
+  background: #ffffff;
+}
+
+.project-item {
+  position: relative;
+  background: #ffffff;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* scalable irregular rhythm for future projects */
+.project-item:nth-child(6n+1) {
+  grid-column: 4 / span 2;
+  margin-top: 20px;
+}
+
+.project-item:nth-child(6n+2) {
+  grid-column: 8 / span 3;
+  margin-top: 110px;
+}
+
+.project-item:nth-child(6n+3) {
+  grid-column: 2 / span 2;
+  margin-top: 20px;
+}
+
+.project-item:nth-child(6n+4) {
+  grid-column: 7 / span 2;
+  margin-top: 90px;
+}
+
+.project-item:nth-child(6n+5) {
+  grid-column: 5 / span 2;
+  margin-top: 30px;
+}
+
+.project-item:nth-child(6n+6) {
+  grid-column: 9 / span 2;
+  margin-top: 120px;
+}
+
+.project-item img {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  display: block;
+  margin: 0;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.project-item:hover img {
+  opacity: 0.84;
+  transform: scale(0.985);
+}
+
+.project-label {
+  display: none !important;
+}
+
+.project-cover-index {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #111110;
+  margin-top: 16px;
+}
+
+.project-cover-title {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111110;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+.project-cover-meta {
+  display: none;
+}
+
+/* DETAIL */
+#page-detail {
+  padding-top: 92px;
+  padding-bottom: 180px;
+  background: #ffffff;
+}
+
+.detail-back {
+  position: fixed;
+  top: 25px;
+  right: 48px;
+  z-index: 250;
+  padding: 0;
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #111110;
+}
+
+.detail-back:hover {
+  color: #777;
+}
+
+#detail-content {
+  background: #ffffff;
+}
+
+.detail-header {
+  display: grid;
+  grid-template-columns: 110px 160px 180px;
+  gap: 70px;
+  max-width: none;
+  padding: 92px 48px 160px;
+  margin: 0;
+}
+
+.detail-title {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.detail-meta {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  line-height: 1.85;
+  margin-top: 0;
+}
+
+.detail-intro {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #60605c;
+}
+
+/* old detail blocks become neutral once JS reorganizes */
+.detail-block,
+.detail-block-pair,
+.detail-block-aside,
+.detail-block-text {
+  padding: 0;
+  margin: 0;
+}
+
+/* generated clean plate field */
+.detail-plate-field {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 24px;
+  row-gap: 145px;
+  padding: 0 48px 180px;
+  background: #ffffff;
+  align-items: start;
+}
+
+.detail-plate {
+  background: #ffffff;
+}
+
+.detail-plate img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.detail-plate .plate-number {
+  margin-top: 14px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #111110;
+}
+
+.detail-text-plate {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #555;
+  background: #ffffff;
+}
+
+.detail-text-plate .detail-block-text-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999994;
+  margin-bottom: 16px;
+}
+
+.detail-text-plate .detail-block-text-content {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #555;
+}
+
+/* no overlap: every plate has a unique grid cell and lives in the grid flow */
+.detail-plate:nth-child(12n+1) { grid-column: 3 / span 2; margin-top: 0; }
+.detail-plate:nth-child(12n+2) { grid-column: 8 / span 3; margin-top: 70px; }
+.detail-plate:nth-child(12n+3) { grid-column: 2 / span 2; margin-top: 20px; }
+.detail-plate:nth-child(12n+4) { grid-column: 7 / span 2; margin-top: 95px; }
+.detail-plate:nth-child(12n+5) { grid-column: 5 / span 3; margin-top: 0; }
+.detail-plate:nth-child(12n+6) { grid-column: 9 / span 2; margin-top: 120px; }
+.detail-plate:nth-child(12n+7) { grid-column: 4 / span 2; margin-top: 35px; }
+.detail-plate:nth-child(12n+8) { grid-column: 8 / span 2; margin-top: 0; }
+.detail-plate:nth-child(12n+9) { grid-column: 2 / span 3; margin-top: 90px; }
+.detail-plate:nth-child(12n+10) { grid-column: 6 / span 2; margin-top: 20px; }
+.detail-plate:nth-child(12n+11) { grid-column: 10 / span 2; margin-top: 105px; }
+.detail-plate:nth-child(12n+12) { grid-column: 4 / span 3; margin-top: 0; }
+
+.detail-text-plate:nth-child(12n+1) { grid-column: 7 / span 3; margin-top: 20px; }
+.detail-text-plate:nth-child(12n+2) { grid-column: 3 / span 3; margin-top: 60px; }
+.detail-text-plate:nth-child(12n+3) { grid-column: 8 / span 3; margin-top: 40px; }
+.detail-text-plate:nth-child(12n+4) { grid-column: 2 / span 3; margin-top: 20px; }
+
+/* INFO / CONTACT pure white */
+#page-info,
+#page-contact {
+  background: #ffffff;
+}
+
+/* Mobile: simple clean list */
+@media (max-width: 700px) {
+  nav {
+    padding: 18px 20px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    padding: 54px 24px 90px;
+  }
+
+  .project-item,
+  .project-item:nth-child(n) {
+    margin-top: 0;
+    width: 64%;
+  }
+
+  .project-item:nth-child(even) {
+    margin-left: auto;
+  }
+
+  .project-item:nth-child(odd) {
+    margin-right: auto;
+  }
+
+  .detail-back {
+    top: 19px;
+    right: 20px;
+  }
+
+  .detail-header {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 72px 24px 90px;
+  }
+
+  .detail-plate-field {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    padding: 0 24px 120px;
+  }
+
+  .detail-plate,
+  .detail-text-plate,
+  .detail-plate:nth-child(n),
+  .detail-text-plate:nth-child(n) {
+    width: 72%;
+    margin-top: 0;
+  }
+
+  .detail-plate:nth-child(even),
+  .detail-text-plate:nth-child(even) {
+    margin-left: auto;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" onclick="showPage('projects')">Charles-Alexis Ruzette</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('projects'); return false;" id="nav-projects" class="active">Work</a></li>
+    <li><a href="#" onclick="showPage('info'); return false;" id="nav-info">Info</a></li>
+    <li><a href="#" onclick="showPage('contact'); return false;" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- PROJECTS -->
+<div id="page-projects" class="page visible">
+  <div class="projects-grid" id="projects-grid"></div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page">
+  <button class="detail-back" onclick="showPage('projects')">Close</button>
+  <div id="detail-content"></div>
+</div>
+
+<!-- INFO -->
+<div id="page-info" class="page">
+  <div class="info-name">Charles-Alexis Ruzette</div>
+  <div class="info-bio">
+    Charles-Alexis Ruzette (Belgium, 2004) is studying architecture at KU Leuven, Ghent, where he is completing a Master of Architecture. He holds a Bachelor of Architecture from UCLouvain Saint-Luc in Brussels. His work is concerned with collective space, threshold, and the relationship between dwelling and urban life. He is preparing for an Erasmus semester in Tokyo. He contributed drawings to "What If Hestia Left the Fire?" by Marta Malinverni, published in Burning Farm in 2026.
+  </div>
+
+  <p class="info-section-label">Education</p>
+  <ul class="info-list">
+    <li>Master of Architecture, KU Leuven, Ghent <span>2023 present</span></li>
+    <li>Bachelor of Architecture, UCLouvain Saint-Luc, Brussels <span>2020 2023</span></li>
+  </ul>
+
+  <p class="info-section-label">Experience</p>
+  <ul class="info-list">
+    <li>Technical drawings, architectural practice, Belgium <span>2023</span></li>
+    <li>Construction site internship, Andras Dasko SRL, Belgium <span>2023</span></li>
+    <li>Observation internship, AWAA <span>2019</span></li>
+  </ul>
+
+  <p class="info-section-label">Publication</p>
+  <ul class="info-list">
+    <li>Drawings, "What If Hestia Left the Fire?" by Marta Malinverni, Burning Farm <span>2026</span></li>
+  </ul>
+</div>
+
+<!-- CONTACT -->
+<div id="page-contact" class="page">
+  <div class="contact-heading">Contact</div>
+  <div class="contact-block">
+    <div class="contact-label">Email</div>
+    <a class="contact-value" href="mailto:charles-alexis.ruzette@student.kuleuven.be">charles-alexis.ruzette@student.kuleuven.be</a>
+  </div>
+  <div class="contact-block">
+    <div class="contact-label">Based in</div>
+    <span class="contact-value" style="cursor:default;">Belgium</span>
+  </div>
+  <div class="contact-block">
+    <div class="contact-label">Currently</div>
+    <span class="contact-value" style="cursor:default;">M.Arch, KU Leuven, Ghent</span>
+  </div>
+</div>
+
+<script>
+const projects = [
+  {
+    id: 1,
+    title: "A City of Play and Culture",
+    year: "2025",
+    type: "Studio project",
+    location: "Ghent",
+    cover: "Ruzette_Charles-Alexis_LFP_Model50_2.jpg",
+    render: function() {
+      return `
+        <div class="detail-header">
+          <div>
+            <div class="detail-title">A City of Play and Culture</div>
+            <div class="detail-meta">Studio project<br>M.Arch I, KU Leuven<br>Ghent, 2025</div>
+          </div>
+          <div class="detail-intro">
+            A former office building in central Ghent reimagined as a mixed-use hub for encounter and cultural exchange. The existing structure is kept as backbone. A new expressive skin opens the building toward the city, framing specific views and transforming the quality of light inside.
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <img src="Ruzette_Charles-Alexis_LFP_View_1.jpg" alt="">
+        </div>
+
+        <div class="detail-block-text">
+          <div class="detail-block-text-label">Concept</div>
+          <div class="detail-block-text-content">
+            <p>Three Japanese ideas shaped the project. Yami, a word for the threshold between darkness and light, informed the transition into the exhibition space. Shakkei, borrowed scenery, inspired the framing of particular views across Ghent.</p>
+            <p>A sentence from Tanizaki's In Praise of Shadows guided the approach to light throughout: spaces that hold shadow invite attention inward rather than outward.</p>
+          </div>
+        </div>
+
+        <div class="detail-block-pair">
+          <img src="Ruzette_Charles-Alexis_LFP_Model50_1.jpg" alt="">
+          <img src="Ruzette_Charles-Alexis_LFP_Model50_2.jpg" alt="">
+        </div>
+
+        <div class="detail-block">
+          <img src="Ruzette_Charles-Alexis_LFP_View_2.jpg" alt="">
+        </div>
+
+        <div class="detail-block-aside">
+          <img src="Ruzette_Charles-Alexis_LFP_View_3.jpg" alt="">
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <img src="Ruzette_Charles-Alexis_LFP_Model200.jpg" alt="">
+            <img src="Ruzette_Charles-Alexis_LFP_Sketch.jpg" alt="">
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <img src="Ruzette_Charles-Alexis_LFP_ConceptDiagram.jpg" alt="">
+        </div>
+
+        <div class="detail-block-pair">
+          <img src="Ruzette_Charles-Alexis_LFP_Section200_1.png" alt="">
+          <img src="Ruzette_Charles-Alexis_LFP_Section200_2.png" alt="">
+        </div>
+
+        <div class="detail-block">
+          <img src="Ruzette_Charles-Alexis_LFP_Plan.png" alt="">
+        </div>
+      `;
+    }
+  },
+  {
+    id: 2,
+    title: "House for Imagination",
+    year: "2026",
+    type: "Studio project",
+    location: "Ghent",
+    cover: "2.jpg",
+    render: function() {
+      return `
+        <div class="detail-header">
+          <div>
+            <div class="detail-title">House for Imagination</div>
+            <div class="detail-meta">Studio project<br>M.Arch I, KU Leuven<br>Ghent, 2026</div>
+          </div>
+          <div class="detail-intro">
+            What architecture becomes when darkness is its primary material. Located within a cave system around Maastricht, the house is not built, it is excavated. Seven sequences are carved from the earth, each offering a distinct spatial and sensory condition, connected by a single waterway running through the raw cave passages.
+          </div>
+        </div>
+
+        <div class="detail-block-pair">
+          <img src="6.jpg" alt="">
+          <img src="3.jpg" alt="">
+        </div>
+
+        <div class="detail-block-text">
+          <div class="detail-block-text-label">Spaces</div>
+          <div class="detail-block-text-content">
+            <p>Seven sequences: the Incision, the Drift, Immersion, Fire, Water, Withdrawal and Sky. At the heart lies the Withdrawal, a large outer square containing a smaller tilted inner square, generating a slope that winds upward through 6.30 meters toward the surface.</p>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <img src="11.jpg" alt="">
+        </div>
+
+        <div class="detail-block-pair">
+          <img src="1.jpg" alt="">
+          <img src="2.jpg" alt="">
+        </div>
+
+        <div class="detail-block-pair">
+          <img src="4.jpg" alt="">
+          <img src="5.jpg" alt="">
+        </div>
+
+        <div class="detail-block">
+          <img src="7.jpg" alt="">
+        </div>
+
+        <div class="detail-block-text">
+          <div class="detail-block-text-label">Material</div>
+          <div class="detail-block-text-content">
+            <p>The material exploration reveals the logic of excavation. Different tactile mediums were tested to represent raw stone and the qualities of darkness it produces.</p>
+          </div>
+        </div>
+
+        <div class="detail-block-pair">
+          <img src="9.jpg" alt="">
+        </div>
+
+        <div class="detail-block-text">
+          <div class="detail-block-text-label">Installation</div>
+          <div class="detail-block-text-content">
+            <p>To present the project, a 1:1 installation was built. You approach a wooden structure, lower your head through a hole, and in doing so physically inhabit the most charged moment of the project: the top of the slope, where 50 centimeters of clearance separates you from the cave ceiling and one meter of earth lies above your head.</p>
+            <p>From inside, a five-meter panoramic print wraps around you. The actual view from the Maastricht hillside, fields and tree lines, slowly turns. The underground world and the surface world meet at exactly the height of your eyes.</p>
+          </div>
+        </div>
+
+        <div class="detail-block-aside">
+          <img src="13.jpg" alt="">
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <img src="12.jpg" alt="">
+            <img src="15.jpg" alt="">
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <img src="14.jpg" alt="">
+        </div>
+
+        <div class="detail-block">
+          <img src="10.jpg" alt="">
+        </div>
+      `;
+    }
+  }
+];
+
+function buildGrid() {
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = '';
+  projects.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'project-item';
+    item.onclick = () => openProject(p.id);
+    if (p.cover) {
+      item.innerHTML = `
+        <img src="${p.cover}" alt="${p.title}" loading="lazy">
+        <div class="project-cover-index">( ${String(p.id).padStart(2, '0')} )</div>
+        <div class="project-cover-title">${p.title}</div>
+        <div class="project-cover-meta">${p.type}, ${p.year}</div>`;
+    } else {
+      item.innerHTML = `
+        <div class="project-placeholder">
+          <div style="text-align:center;">
+            <span style="font-size:13px;color:var(--gray);display:block;">${p.title}</span>
+            <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#ccc;display:block;margin-top:4px;">${p.type}, ${p.year}</span>
+          </div>
+        </div>`;
+    }
+    grid.appendChild(item);
+  });
+}
+
+function openProject(id) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('detail-content').innerHTML = p.render();
+  showPage('detail');
+  buildFalaDetailLayout();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('visible');
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+buildGrid();
+
+function buildFalaDetailLayout() {
+  const content = document.getElementById('detail-content');
+  if (!content) return;
+
+  const header = content.querySelector('.detail-header');
+  const images = Array.from(content.querySelectorAll('.detail-block img, .detail-block-pair img, .detail-block-aside > img, .detail-block-aside > div img'));
+  const texts = Array.from(content.querySelectorAll('.detail-block-text'));
+
+  const field = document.createElement('div');
+  field.className = 'detail-plate-field';
+
+  let imgIndex = 0;
+  let textIndex = 0;
+  let total = images.length + texts.length;
+
+  for (let i = 0; i < total; i++) {
+    if ((i === 2 || i === 6 || i === 10) && textIndex < texts.length) {
+      const t = document.createElement('div');
+      t.className = 'detail-text-plate';
+      t.innerHTML = texts[textIndex].innerHTML;
+      field.appendChild(t);
+      textIndex++;
+    } else if (imgIndex < images.length) {
+      const plate = document.createElement('div');
+      plate.className = 'detail-plate';
+
+      const img = images[imgIndex].cloneNode(true);
+      img.removeAttribute('style');
+      plate.appendChild(img);
+
+      const n = document.createElement('div');
+      n.className = 'plate-number';
+      n.textContent = `( ${String(imgIndex + 1).padStart(2, '0')} )`;
+      plate.appendChild(n);
+
+      field.appendChild(plate);
+      imgIndex++;
+    } else if (textIndex < texts.length) {
+      const t = document.createElement('div');
+      t.className = 'detail-text-plate';
+      t.innerHTML = texts[textIndex].innerHTML;
+      field.appendChild(t);
+      textIndex++;
+    }
+  }
+
+  content.innerHTML = '';
+  if (header) content.appendChild(header);
+  content.appendChild(field);
+}
+
+</script>
+</body>
+</html>
