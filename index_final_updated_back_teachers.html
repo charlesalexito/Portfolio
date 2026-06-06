@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charles-Alexis Ruzette</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2242%22%20fill%3D%22%23111110%22/%3E%3C/svg%3E">
+<link rel="shortcut icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2242%22%20fill%3D%22%23111110%22/%3E%3C/svg%3E">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #ffffff;
+  --black: #111110;
+  --gray: #969690;
+  --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 24px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(6px);
+}
+
+.nav-name {
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--black);
+}
+
+.nav-links {
+  display: flex;
+  gap: 38px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gray);
+  transition: color 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active { color: var(--black); }
+
+.page {
+  display: none;
+  opacity: 0;
+  transform: translateY(7px);
+}
+
+.page.visible {
+  display: block;
+  animation: pageIn 520ms ease forwards;
+}
+
+@keyframes pageIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HOME — model covers, diagonal, side-heavy, huge white space */
+#page-projects {
+  padding: 110px 0 210px;
+  background: #fff;
+  min-height: 1800px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  column-gap: 22px;
+  row-gap: 320px;
+  padding: 120px 48px 180px;
+}
+
+.project-item {
+  position: relative;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+}
+
+.project-item:nth-child(1) { grid-column: 2 / span 3; margin-top: 0; }
+.project-item:nth-child(2) { grid-column: 9 / span 3; margin-top: 230px; }
+.project-item:nth-child(3) { grid-column: 13 / span 3; margin-top: 20px; }
+.project-item:nth-child(4) { grid-column: 5 / span 3; margin-top: 220px; }
+
+.project-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: opacity 260ms ease, transform 360ms ease;
+}
+
+.project-item:hover img {
+  opacity: 0.84;
+  transform: scale(0.985);
+}
+
+.project-cover-index {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  margin-top: 16px;
+}
+
+.project-cover-title {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+/* DETAIL */
+#page-detail {
+  padding-top: 92px;
+  padding-bottom: 240px;
+  background: #fff;
+}
+
+.detail-back {
+  position: fixed;
+  top: 25px;
+  right: 48px;
+  z-index: 1200;
+  border: none;
+  background: none;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.detail-back:hover { color: #777; }
+
+.curated-header {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  column-gap: 22px;
+  padding: 120px 48px 240px;
+}
+
+.curated-number {
+  grid-column: 1 / span 1;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.curated-title {
+  grid-column: 3 / span 3;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.curated-meta {
+  grid-column: 7 / span 3;
+  font-size: 9px;
+  line-height: 1.8;
+  color: #777;
+}
+
+.curated-intro {
+  grid-column: 11 / span 4;
+  font-size: 11px;
+  line-height: 1.85;
+  color: #555;
+  max-width: 360px;
+}
+
+.curated-field {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  column-gap: 22px;
+  row-gap: 360px;
+  padding: 0 48px 280px;
+  align-items: start;
+}
+
+.plate,
+.plate-text { background: #fff; }
+
+.plate img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.plate-number {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  margin-top: 14px;
+}
+
+.plate-text {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #555;
+  max-width: 340px;
+}
+
+.plate-text-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 16px;
+}
+
+/* Three strict image sizes — never too big */
+.plate.small { max-width: 280px; }
+.plate.medium { max-width: 420px; }
+.plate.large { max-width: 560px; }
+
+/* No overlap: grid-flow only */
+.curated-field > *:nth-child(12n+1)  { grid-column: 2 / span 4; margin-top: 0; }
+.curated-field > *:nth-child(12n+2)  { grid-column: 11 / span 4; margin-top: 145px; }
+.curated-field > *:nth-child(12n+3)  { grid-column: 1 / span 4; margin-top: 70px; }
+.curated-field > *:nth-child(12n+4)  { grid-column: 8 / span 4; margin-top: 230px; }
+.curated-field > *:nth-child(12n+5)  { grid-column: 13 / span 3; margin-top: 30px; }
+.curated-field > *:nth-child(12n+6)  { grid-column: 5 / span 4; margin-top: 200px; }
+.curated-field > *:nth-child(12n+7)  { grid-column: 10 / span 4; margin-top: 60px; }
+.curated-field > *:nth-child(12n+8)  { grid-column: 2 / span 4; margin-top: 250px; }
+.curated-field > *:nth-child(12n+9)  { grid-column: 7 / span 4; margin-top: 35px; }
+.curated-field > *:nth-child(12n+10) { grid-column: 12 / span 4; margin-top: 210px; }
+.curated-field > *:nth-child(12n+11) { grid-column: 1 / span 3; margin-top: 70px; }
+.curated-field > *:nth-child(12n+12) { grid-column: 6 / span 4; margin-top: 230px; }
+
+/* INFO */
+#page-info {
+  padding: 120px 48px 120px;
+  max-width: 680px;
+}
+
+.info-name {
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+
+.info-bio {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #555;
+  margin-bottom: 64px;
+  max-width: 560px;
+}
+
+.info-section-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 12px;
+}
+
+.info-list {
+  list-style: none;
+  margin-bottom: 48px;
+}
+
+.info-list li {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--black);
+  padding: 9px 0;
+  border-bottom: 0.5px solid #ececec;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.info-list li span {
+  color: var(--gray);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* CONTACT */
+#page-contact {
+  padding: 120px 48px 120px;
+  max-width: 480px;
+}
+
+.contact-heading {
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 56px;
+}
+
+.contact-block { margin-bottom: 40px; }
+
+.contact-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 8px;
+}
+
+.contact-value {
+  font-size: 13px;
+  color: var(--black);
+  text-decoration: none;
+  border-bottom: 0.5px solid transparent;
+  transition: border-color 0.2s;
+  display: inline-block;
+}
+
+.contact-value:hover { border-color: var(--black); }
+
+@media (max-width: 700px) {
+  nav { padding: 18px 20px; }
+  .nav-links { gap: 20px; }
+
+  #page-projects {
+    min-height: auto;
+    padding: 76px 0 110px;
+  }
+
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 110px;
+    padding: 55px 24px 110px;
+  }
+
+  .project-item,
+  .project-item:nth-child(n) {
+    width: 62%;
+    margin-top: 0;
+  }
+
+  .project-item:nth-child(even) { margin-left: auto; }
+
+  .detail-back {
+    top: 19px;
+    right: 20px;
+  }
+
+  .curated-header {
+    display: block;
+    padding: 78px 24px 130px;
+  }
+
+  .curated-title,
+  .curated-meta,
+  .curated-intro {
+    margin-top: 28px;
+    max-width: 100%;
+  }
+
+  .curated-field {
+    display: flex;
+    flex-direction: column;
+    gap: 125px;
+    padding: 0 24px 150px;
+  }
+
+  .curated-field > *:nth-child(n),
+  .plate.small,
+  .plate.medium,
+  .plate.large {
+    width: 72%;
+    max-width: none;
+    margin-top: 0;
+  }
+
+  .curated-field > *:nth-child(even) {
+    margin-left: auto;
+  }
+
+  #page-info,
+  #page-contact {
+    padding: 86px 24px 80px;
+  }
+}
+
+/* HARD CLICK FIX */
+.project-item,
+.project-item:visited,
+.project-item:hover,
+.project-item:active {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 0;
+  background: #ffffff;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.project-item img,
+.project-cover-index,
+.project-cover-title {
+  pointer-events: none;
+}
+
+
+/* FINAL SMALL FIXES */
+.project-item:nth-child(3) {
+  margin-top: -90px !important;
+}
+
+/* IMAGE LIGHTBOX */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  cursor: zoom-out;
+}
+
+.image-lightbox.visible {
+  display: flex;
+}
+
+.image-lightbox img {
+  max-width: min(86vw, 1200px);
+  max-height: 86vh;
+  width: auto;
+  height: auto;
+  display: block;
+  box-shadow: none;
+}
+
+.image-lightbox-caption {
+  position: fixed;
+  left: 48px;
+  bottom: 34px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.plate img {
+  cursor: zoom-in;
+}
+
+@media (max-width: 700px) {
+  .project-item:nth-child(3) {
+    margin-top: 0 !important;
+  }
+
+  .image-lightbox {
+    padding: 24px;
+  }
+
+  .image-lightbox img {
+    max-width: 92vw;
+    max-height: 82vh;
+  }
+
+  .image-lightbox-caption {
+    left: 24px;
+    bottom: 22px;
+  }
+}
+
+
+/* SMOOTHER IMAGE ZOOM */
+.image-lightbox {
+  display: flex !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 380ms ease, visibility 380ms ease;
+}
+
+.image-lightbox.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.image-lightbox img {
+  transform: scale(0.985);
+  opacity: 0;
+  transition: transform 420ms ease, opacity 420ms ease;
+}
+
+.image-lightbox.visible img {
+  transform: scale(1);
+  opacity: 1;
+}
+
+
+.project-tutors {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: #9a9a9a;
+  line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+<nav>
+  <a class="nav-name" onclick="showPage('projects')">Charles-Alexis Ruzette</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('projects'); return false;" id="nav-projects" class="active">Work</a></li>
+    <li><a href="#" onclick="showPage('info'); return false;" id="nav-info">Info</a></li>
+    <li><a href="#" onclick="showPage('contact'); return false;" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div id="page-projects" class="page visible">
+  <div class="projects-grid" id="projects-grid"></div>
+</div>
+
+<div id="page-detail" class="page">
+  <button class="detail-back" onclick="showPage('projects')">Close</button>
+  <div id="detail-content"></div>
+</div>
+
+<div id="page-info" class="page">
+  <div class="info-name">Charles-Alexis Ruzette</div>
+  <div class="info-bio">
+    Charles-Alexis Ruzette (b. 2004, Belgium) is an architecture student based between Brussels and Ghent, Belgium. He is currently completing a Master of Architecture at KU Leuven, having previously earned a Bachelor of Architecture with Distinction from UCLouvain LOCI Brussels.
+    <br><br>
+    His work explores the relationship between dwelling and urban life, with a particular interest in collective space, thresholds, and the ways architecture shapes everyday encounters. Drawing from both European and Japanese architectural culture, his projects often investigate questions of density, domesticity, and spatial ambiguity.
+    <br><br>
+    In 2026, he will undertake an Erasmus exchange at Waseda University in Tokyo. He also contributed drawings to <em>What If Hestia Left the Fire?</em> by Marta Malinverni, published by Burning Farm.
+  </div>
+
+  <p class="info-section-label">Education</p>
+  <ul class="info-list">
+    <li>Master of Architecture, KU Leuven, Ghent <span>2023 present</span></li>
+    <li>Bachelor of Architecture, UCLouvain LOCI Brussels <span>2020 2023</span></li>
+  </ul>
+
+  <p class="info-section-label">Experience</p>
+  <ul class="info-list">
+    <li>Technical drawings, architectural practice, Belgium <span>2023</span></li>
+    <li>Construction site internship, Andras Dasko SRL, Belgium <span>2023</span></li>
+    <li>Observation internship, AWAA <span>2019</span></li>
+  </ul>
+
+  <p class="info-section-label">Publication</p>
+  <ul class="info-list">
+    <li>Drawings, <em>What If Hestia Left the Fire?</em> by Marta Malinverni, Burning Farm <span>2026</span></li>
+  </ul>
+</div>
+
+<div id="page-contact" class="page">
+  <div class="contact-heading">Contact</div>
+
+  <div class="contact-block">
+    <div class="contact-label">Email</div>
+    <a class="contact-value" href="mailto:charles-alexis.ruzette@student.kuleuven.be">charles-alexis.ruzette@student.kuleuven.be</a>
+  </div>
+
+  <div class="contact-block">
+    <div class="contact-label">Instagram</div>
+    <a class="contact-value" href="https://instagram.com/ruzette_charly" target="_blank">@ruzette_charly</a>
+  </div>
+
+  <div class="contact-block">
+    <div class="contact-label">Based in</div>
+    <span class="contact-value" style="cursor:default;">Brussels / Ghent, Belgium</span>
+  </div>
+
+  <div class="contact-block">
+    <div class="contact-label">Currently</div>
+    <span class="contact-value" style="cursor:default;">Master of Architecture, KU Leuven, Ghent</span>
+  </div>
+</div>
+
+
+<div class="image-lightbox" id="image-lightbox" aria-hidden="true">
+  <img id="image-lightbox-img" src="" alt="">
+  <div class="image-lightbox-caption" id="image-lightbox-caption"></div>
+</div>
+
+<script>
+const projects = [
+  {
+    id: 1,
+    title: "A City of Play and Culture",
+    year: "2025",
+    type: "Studio project",
+    location: "Ghent",
+    cover: "Ruzette_Charles-Alexis_LFP_Model50_2.jpg",
+    info: "M.Arch I, KU Leuven · Ghent · 2025<br><span class=\"project-tutors\">Hera Van Sande · Sara Caruso · Marius Indrei</span>",
+    intro: "A former office building in central Ghent reimagined as a mixed-use hub for encounter and cultural exchange. The existing structure is kept as a backbone, while a new skin opens the building toward the city, framing specific views and transforming the quality of light inside.",
+    images: [
+      "Ruzette_Charles-Alexis_LFP_Model50_2.jpg",
+      "Ruzette_Charles-Alexis_LFP_Plan.jpg",
+      "Ruzette_Charles-Alexis_LFP_View_1.jpg",
+      "Ruzette_Charles-Alexis_LFP_ConceptDiagram.jpg",
+      "Ruzette_Charles-Alexis_LFP_Model200.jpg",
+      "Ruzette_Charles-Alexis_LFP_View_2.jpg",
+      "Ruzette_Charles-Alexis_LFP_Section200_1.jpg",
+      "Ruzette_Charles-Alexis_LFP_View_3.jpg"
+    ],
+    sizes: ["medium", "large", "small", "medium", "small", "medium", "large", "small"],
+    textBlocks: [
+      {
+        label: "Concept",
+        text: "The project draws from Japanese spatial ideas: shadow, borrowed scenery, and the careful framing of thresholds. Rather than replacing the existing building, the intervention works through additions, openings and atmosphere."
+      },
+      {
+        label: "Light",
+        text: "A new expressive skin transforms the relation between interior and city. Views are not simply opened, but selected, creating a sequence of moments between exhibition, public use and urban life."
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "House for Imagination",
+    year: "2026",
+    type: "Studio project",
+    location: "Ghent",
+    cover: "2.jpg",
+    info: "M.Arch I, KU Leuven · Ghent · 2026<br><span class=\"project-tutors\">Ruben Castro · Doug Allard</span>",
+    intro: "What architecture becomes when darkness is its primary material. Developed through an exploration of cave-like interiors and constructed imagination, the house is not built but excavated. A sequence of spaces is carved from the earth, moving between water, shadow, withdrawal and sky.",
+    images: ["2.jpg", "3.jpg", "5.jpg", "10.jpg", "13.jpg", "14.jpg", "house-imagination-children.jpg"],
+    sizes: ["large", "small", "medium", "small", "medium", "small", "medium"],
+    textBlocks: [
+      {
+        label: "Sequence",
+        text: "The project unfolds as a slow movement through carved conditions. It is less a house as object than a passage through darkness, texture and framed light."
+      },
+      {
+        label: "Installation",
+        text: "A 1:1 installation invited the visitor to lower their head into the project. The body becomes part of the drawing: looking, entering, and inhabiting the threshold between underground space and landscape."
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "The Converging Corner",
+    year: "2023",
+    type: "Studio project",
+    location: "Brussels",
+    cover: "p3bac2.jpg",
+    
+    info: "B.Arch II, UCLouvain LOCI Brussels · Brussels · 2023<br><span class=\"project-tutors\">Émilie Bechet</span>",
+    intro: "The project proposes seven housing units on a busy square in Brussels, occupying a corner plot between two adjoining buildings. By enclosing the corner, the building creates a shared courtyard for residents while returning part of the plot to public use.",
+    images: ["p3bac2.jpg", "testmgl.jpg", ",eped.jpg", "p3 bac2 maquettes d'etude nice.jpg", "sallevie render final high quality.jpg"],
+    sizes: ["large", "medium", "small", "small", "medium"],
+    textBlocks: [
+      {
+        label: "Corner",
+        text: "Two principal dwellings are connected by a covered external staircase, balancing openness and privacy. A gradual shift in levels gives rhythm to the street edge and marks the passage from square to courtyard."
+      },
+      {
+        label: "Material",
+        text: "Brick is extended beyond the building envelope into benches, low walls and planters. The same material vocabulary ties the housing to the public realm and gives the square a coherent character."
+      }
+    ]
+  }
+];
+
+function buildGrid() {
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = '';
+
+  projects.forEach(p => {
+    const item = document.createElement('a');
+    item.href = '#';
+    item.className = 'project-item';
+    item.dataset.projectId = p.id;
+    item.setAttribute('aria-label', 'Open ' + p.title);
+
+    const fallback = p.fallbackCover ? ` onerror="this.onerror=null;this.src='${p.fallbackCover}'"` : '';
+
+    item.innerHTML = `
+      <img src="${p.cover}" alt="${p.title}" loading="lazy"${fallback}>
+      <div class="project-cover-index">( ${String(p.id).padStart(2, '0')} )</div>
+      <div class="project-cover-title">${p.title}</div>
+    `;
+
+    grid.appendChild(item);
+  });
+
+  grid.onclick = function(e) {
+    const card = e.target.closest('.project-item');
+    if (!card) return;
+    e.preventDefault();
+    openProject(Number(card.dataset.projectId));
+  };
+}
+
+function renderProject(p) {
+  const textInsertAfter = [1, 4];
+  let textIndex = 0;
+  let items = '';
+
+  p.images.forEach((src, i) => {
+    const size = p.sizes[i] || 'medium';
+
+    items += `
+      <div class="plate ${size}">
+        <img src="${src}" alt="${p.title} image ${i + 1}" loading="lazy">
+        <div class="plate-number">( ${String(i + 1).padStart(2, '0')} )</div>
+      </div>
+    `;
+
+    if (textInsertAfter.includes(i) && p.textBlocks[textIndex]) {
+      const t = p.textBlocks[textIndex];
+      items += `
+        <div class="plate-text">
+          <div class="plate-text-label">${t.label}</div>
+          <div>${t.text}</div>
+        </div>
+      `;
+      textIndex++;
+    }
+  });
+
+  while (textIndex < p.textBlocks.length) {
+    const t = p.textBlocks[textIndex];
+    items += `
+      <div class="plate-text">
+        <div class="plate-text-label">${t.label}</div>
+        <div>${t.text}</div>
+      </div>
+    `;
+    textIndex++;
+  }
+
+  return `
+    <div class="curated-header">
+      <div class="curated-number">( ${String(p.id).padStart(2, '0')} )</div>
+      <div class="curated-title">${p.title}</div>
+      <div class="curated-meta">${p.info}</div>
+      <div class="curated-intro">${p.intro}</div>
+    </div>
+    <div class="curated-field">
+      ${items}
+    </div>
+  `;
+}
+
+function openProject(id, push = true) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('detail-content').innerHTML = renderProject(p);
+  showPage('detail', false);
+  if (push) {
+    history.pushState({ page: 'detail', projectId: id }, '', '#project-' + id);
+  }
+}
+
+function showPage(name, push = true) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+
+  document.getElementById('page-' + name).classList.add('visible');
+
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+
+  window.scrollTo(0, 0);
+
+  if (push) {
+    const hash = name === 'projects' ? '#' : '#' + name;
+    history.pushState({ page: name }, '', hash);
+  }
+}
+
+window.addEventListener('popstate', function(event) {
+  const state = event.state;
+  if (state && state.page === 'detail' && state.projectId) {
+    openProject(state.projectId, false);
+  } else if (state && state.page) {
+    showPage(state.page, false);
+  } else {
+    showPage('projects', false);
+  }
+});
+
+function initializeHistory() {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#project-')) {
+    const id = Number(hash.replace('#project-', ''));
+    if (id) {
+      history.replaceState({ page: 'detail', projectId: id }, '', hash);
+      openProject(id, false);
+      return;
+    }
+  }
+
+  if (hash === '#info') {
+    history.replaceState({ page: 'info' }, '', hash);
+    showPage('info', false);
+    return;
+  }
+
+  if (hash === '#contact') {
+    history.replaceState({ page: 'contact' }, '', hash);
+    showPage('contact', false);
+    return;
+  }
+
+  history.replaceState({ page: 'projects' }, '', window.location.pathname);
+}
+
+buildGrid();
+initializeHistory();
+
+document.addEventListener('error', function(e) {
+  if (e.target && e.target.tagName === 'IMG') {
+    console.warn('Missing image file:', e.target.getAttribute('src'));
+  }
+}, true);
+
+
+function setupLightbox() {
+  const box = document.getElementById('image-lightbox');
+  const img = document.getElementById('image-lightbox-img');
+  const caption = document.getElementById('image-lightbox-caption');
+  if (!box || !img) return;
+
+  document.addEventListener('click', function(e) {
+    const target = e.target;
+    if (!target || target.tagName !== 'IMG') return;
+
+    // Only zoom detail project images, not homepage covers/nav
+    if (!target.closest('.plate')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    img.src = target.src;
+    img.alt = target.alt || '';
+    caption.textContent = target.alt || '';
+    box.classList.add('visible');
+    box.setAttribute('aria-hidden', 'false');
+  });
+
+  box.addEventListener('click', function() {
+    box.classList.remove('visible');
+    box.setAttribute('aria-hidden', 'true');
+    img.src = '';
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      box.classList.remove('visible');
+      box.setAttribute('aria-hidden', 'true');
+      img.src = '';
+    }
+  });
+}
+
+setupLightbox();
+
+</script>
+</body>
+</html>
